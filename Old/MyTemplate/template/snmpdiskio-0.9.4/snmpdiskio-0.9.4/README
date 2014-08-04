@@ -1,0 +1,104 @@
+# $Id: README,v 1.2 2006/03/31 15:57:44 mikaelf Exp $
+# snmpdiskio 0.9.4 (c) 2006 Mikael Fridh <mikael@meanstreak.se>
+# Disk I/O statistics for Cacti created due to 
+# the flaky disk i/o support in net-snmp
+
+1. ABOUT
+2. INSTALLATION
+2a. INSTALLATION: SNMP
+2b. INSTALLATION: Cacti
+3. USAGE
+4. BLURB
+
+1. ABOUT
+========
+This set of simple scripts and Cacti templates gives you disk I/O support.
+Currently net-snmp has flaky or no support for disk I/O at all.
+This version: 0.9.4, gives you only one thing: Disk I/O (bytes/sec).
+
+snmpdiskio 0.9.4 has been tested on:
+* Linux 2.4 with /proc/partitions iostats patch (included by default in RHEL3)
+* Linux 2.6 (/proc/diskstats)
+* Net-snmp 5.0.9
+* Cacti 0.8.6g
+
+Report any problems to Mikael Fridh
+
+2. INSTALLATION
+===============
+The installation is in two parts. One for the SNMP configuration on the
+monitored host. The other is for the addition to Cacti. The addition to Cacti
+need only be done once.
+
+2a. INSTALLATION: SNMP
+======================
+* Put the following lines in snmpd.conf:
+exec .1.3.6.1.4.1.2021.54 hdNum /usr/local/bin/snmpdiskio hdNum
+exec .1.3.6.1.4.1.2021.55 hdIndex /usr/local/bin/snmpdiskio hdIndex
+exec .1.3.6.1.4.1.2021.56 hdDescr /usr/local/bin/snmpdiskio hdDescr
+exec .1.3.6.1.4.1.2021.57 hdInBlocks /usr/local/bin/snmpdiskio hdInBlocks
+exec .1.3.6.1.4.1.2021.58 hdOutBlocks /usr/local/bin/snmpdiskio hdOutBlocks
+
+* Install the script snmpdiskio on the machine to be monitored:
+install -m 0755 -o root -g root -p -v snmpdiskio /usr/local/bin/
+
+2b. INSTALLATION: Cacti
+=======================
+* Import the XML templates from `cacti_graph_template_disk_io_bytessec.xml`.
+* Import the data query template from `cacti_data_query_snmp_disk_statistics.xml`.
+* Copy the `partition.xml` file to cacti/resource/snmp_queries/partition.xml.
+
+3. USAGE
+========
+In Cacti: Add the Data Query to your Host Templates.
+For any Device already configured in Cacti you need to add the Data Query
+manually.
+
+After that you just click "New Graph", choose your Device, select the
+partitions you want graphs created for and click Create.
+
+4. BLURB
+========
+* /proc/partitions on 2.4:
+Field  1 -- # of reads issued
+    This is the total number of reads completed successfully.
+Field  2 -- # of reads merged, field 6 -- # of writes merged
+    Reads and writes which are adjacent to each other may be merged for
+    efficiency.  Thus two 4K reads may become one 8K read before it is
+    ultimately handed to the disk, and so it will be counted (and queued)
+    as only one I/O.  This field lets you know how often this was done.
+Field  3 -- # of sectors read
+    This is the total number of sectors read successfully.
+Field  4 -- # of milliseconds spent reading
+    This is the total number of milliseconds spent by all reads (as
+    measured from __make_request() to end_that_request_last()).
+Field  5 -- # of writes completed
+    This is the total number of writes completed successfully.
+Field  7 -- # of sectors written
+    This is the total number of sectors written successfully.
+Field  8 -- # of milliseconds spent writing
+    This is the total number of milliseconds spent by all writes (as
+    measured from __make_request() to end_that_request_last()).
+Field  9 -- # of I/Os currently in progress
+    The only field that should go to zero. Incremented as requests are
+    given to appropriate request_queue_t and decremented as they finish.
+Field 10 -- # of milliseconds spent doing I/Os
+    This field is increases so long as field 9 is nonzero.
+Field 11 -- weighted # of milliseconds spent doing I/Os
+    This field is incremented at each I/O start, I/O completion, I/O
+    merge, or read of these stats by the number of I/Os in progress
+    (field 9) times the number of milliseconds spent doing I/O since the
+    last update of this field.  This can provide an easy measure of both
+    I/O completion time and the backlog that may be accumulating.
+
+* /proc/partitions on 2.5: on 2.6 it's /proc/diskstats
+Field  1 -- # of reads issued
+    This is the total number of reads issued to this partition.
+Field  2 -- # of sectors read
+    This is the total number of sectors requested to be read from this
+    partition.
+Field  3 -- # of reads issued
+    This is the total number of writes issued to this partition.
+Field  4 -- # of sectors read
+    This is the total number of sectors requested to be written to
+    this partition.

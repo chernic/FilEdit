@@ -1,0 +1,21 @@
+2006-04-04 15:11  mikaelf
+
+	* snmpdiskio: * added a simple test + vars for 2.4/2.6 detection
+	  and support.
+
+2006-03-31 17:57  mikaelf
+
+	* README, TODO, snmpdiskio: - Added TODO * Now supports Linux 2.6
+
+2006-03-31 17:47  mikaelf
+
+	* README, cacti_data_query_snmp_disk_statistics.xml,
+	  cacti_graph_template_disk_io_bytessec.xml, partition.xml,
+	  snmpdiskio: * Initial import of snmpdiskio 0.9.1
+
+2006-03-31 17:47  mikaelf
+
+	* README, cacti_data_query_snmp_disk_statistics.xml,
+	  cacti_graph_template_disk_io_bytessec.xml, partition.xml,
+	  snmpdiskio: Initial revision
+

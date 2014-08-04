@@ -1,0 +1,65 @@
+Cacti has imported the following items:
+
+CDEF
+
+[success] Multiply by 1024 [update]
+[success] Memory Used (Linux) [new]
+GPRINT Preset
+
+[success] Normal [update]
+Data Input Method
+
+[success] Get SNMP Data [update]
+Data Template
+
+[success] ucd/net - Memory - Buffers [update]
+[success] ucd/net - Memory - Free [update]
+[success] ucd/net - Memory - Total [new]
+[success] ucd/net - Memory - Cache [new]
+Graph Template
+
+[success] ucd/net - Memory Usage (Linux) [new]
+
+
+***************************************************
+Cacti has imported the following items:
+
+CDEF
+
+[success] Multiply by 1024 [update]
+[success] Memory Used (Unix) [new]
+GPRINT Preset
+
+[success] Normal [update]
+Data Input Method
+
+[success] Get SNMP Data [update]
+Data Template
+
+[success] ucd/net - Memory - Free [update]
+[success] ucd/net - Memory - Total [update]
+Graph Template
+
+[success] ucd/net - Memory Usage (Unix) [new]
+
+
+***************************************************
+Cacti has imported the following items:
+
+CDEF
+
+[success] Multiply by 1024 [update]
+[success] Swap Used (Unix) [new]
+GPRINT Preset
+
+[success] Normal [update]
+Data Input Method
+
+[success] Get SNMP Data [update]
+Data Template
+
+[success] ucd/net - Swap - Total [new]
+[success] ucd/net - Swap - Free [new]
+Graph Template
+
+[success] ucd/net - Swap Usage [new]

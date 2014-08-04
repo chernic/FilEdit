@@ -1,0 +1,37 @@
+
+Import Results
+Cacti has imported the following items
+
+CDEF
+
+[success] Advanced Ping - Loss Unknown [new]
+[success] Advanced Ping - Loss 51 - 95 % top [new]
+[success] Advanced Ping - Loss 6 - 10 % top [new]
+[success] Advanced Ping - Loss 11 - 15 % top [new]
+[success] Advanced Ping - Loss 16 - 50 % top [new]
+[success] Advanced Ping - Loss 96 - 100 % top [new]
+[success] Advanced Ping - Position 1,2 [new]
+[success] Advanced Ping - Position 3,4,5 [new]
+[success] Advanced Ping - Loss 11 - 15 % bottom [new]
+[success] Advanced Ping - Loss 6 - 10 % bottom [new]
+[success] Advanced Ping - Loss 16 - 50 % bottom [new]
+[success] Advanced Ping - Loss 51 - 95 % bottom [new]
+[success] Advanced Ping - Loss 96 - 100 % bottom [new]
+[success] Advanced Ping - Loss 1 - 2 % bottom [new]
+[success] Advanced Ping - Loss 1 - 2 % top [new]
+[success] Advanced Ping - Loss 3 - 5 % bottom [new]
+[success] Advanced Ping - Loss 3 - 5 % top [new]
+GPRINT Preset
+
+[success] Normal [update]
+[success] Ping [new]
+[success] Percentage as Decimal [new]
+Data Input Method
+
+[success] PING - Advanced Ping v1.3 [new]
+Data Template
+
+[success] PING - Advanced Ping v1.3 [new]
+Graph Template
+
+[success] PING - Advanced Ping v1.3 [new]

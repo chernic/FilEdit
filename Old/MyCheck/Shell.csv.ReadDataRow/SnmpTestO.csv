@@ -1,0 +1,10 @@
+1 minute Load,Load
+5 minute Load,Load
+15 minute Load,Load
+percentage of user CPU time,CPU
+raw user cpu time,CPU
+percentages of system CPU time,CPU
+raw system cpu time,CPU
+percentages of idle CPU time,CPU
+raw idle cpu time,CPU
+raw nice cpu time,CPU

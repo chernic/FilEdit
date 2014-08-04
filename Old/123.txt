@@ -1,0 +1,3 @@
+
+# 删除除ttf-arphic-ukai_0.2.20080216.1.orig.tar.gz外其他文件
+# rm -rf `ls | grep -v "^ttf-arphic-ukai_0.2.20080216.1.orig.tar.gz$"`

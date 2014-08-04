@@ -1,0 +1,10 @@
+update tablename set c3=$3 where c1=$1;
+update tablename set c3=$3 where c1=$1;
+update tablename set c3=$3 where c1=$1;
+update tablename set c3=$3 where c1=$1;
+update tablename set c3=$3 where c1=$1;
+update tablename set c3=$3 where c1=$1;
+update tablename set c3=$3 where c1=$1;
+update tablename set c3=$3 where c1=$1;
+update tablename set c3=$3 where c1=$1;
+update tablename set c3=$3 where c1=$1;
