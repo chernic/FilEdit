@@ -93,3 +93,33 @@ REPO_DIR=$TEST_OT
 ChangeRepo1 "epel" "0";
 ChangeRepo1 "epel" "1";
 
+ChangePHP2_0()
+{
+LOG_ERROR "Edit Test 2.0"
+# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(原始版)
+# 步骤1, 定位字符串,找到首字段所在行
+# 步骤2, 模拟原字符串格式,复制字符串 直到尾字段
+# 步骤3, 修改符合格式的字符串的内容  直到尾字段
+PHP_DIR=$CACTI_LINK/include/global_settings.php
+PHP_DIR=$TEST_OT
+DIRR="/usr/share/fonts/ukai.ttc"
+	# 找出指定行并修改
+	LOG_INFO "Change $1 enoD"
+		FILE=$1
+		LOG_INFO "  Found : $FILE"
+		
+		LOG_INFO "  Edit  : Line $ss enoD"
+			# 定位 path_rrdtool_default_font 段到 max_length 段的字符串
+			ss=$(grep -n 'path_rrdtool_default_font' $FILE | cut -d ':' -f 1)
+			# 重复 max_length 段的格式
+			sed -i $ss',/max_length/ s/^.*max_length.*$/&\n&/' $FILE
+			# 修改 新增的 max_length 段
+			sed -i $ss',/max_length/ s:"max_length.*$:"default" => "'$DIRR'",:' $FILE
+		LOG_INFO "  Edit  : Line $ss Done\n"
+
+		LOG_INFO "  Grep  : enabled from $1"
+			sed -n '79,90p' $FILE	
+	LOG_INFO "Change $1 Done.\n"
+}
+ChangePHP2_0 "$TEST_OT/global_settings.php" 
+
