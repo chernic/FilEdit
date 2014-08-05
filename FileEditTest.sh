@@ -252,7 +252,7 @@ PHP_DIR=$CACTI_LINK/include/global_settings.php
 	LOG_INFO "Found : $FILE"
 		# 定位 WHERESTART 段起的 BEGIN 段
 		ss=`sed -n '/'$WHERESTART'/,${
-		/'$BEGIN'/{
+		/\"'$BEGIN'\/{
 		=
 		}
 		}' $FILE `
