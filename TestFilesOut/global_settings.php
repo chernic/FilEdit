@@ -78,7 +78,8 @@ $settings = array(
 			),
 		"path_rrdtool_default_font" => array(
 			"friendly_name" => "RRDTool默认字体路径",
-			"description" => "rrdtool v1.2以上版本所使用的Truetype字体路径.",
+			"description" => "描述已存在，直接修改",
+			"default" => "/usr/share/fonts/ukai.ttc",
 			"method" => "filepath",
 			"max_length" => "255"
 			),
