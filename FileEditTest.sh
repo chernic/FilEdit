@@ -191,4 +191,4 @@ PHP_DIR=$CACTI_LINK/include/global_settings.php
 			sed -n '79,90p' $FILE	
 	LOG_INFO "Change $1 Done.\n"
 }
-ChangePHP2_3 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "default"  "/usr/share/fonts/ukai.ttc"
+# ChangePHP2_3 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "default"  "/usr/share/fonts/ukai.ttc"
