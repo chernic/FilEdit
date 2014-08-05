@@ -81,6 +81,7 @@ $settings = array(
 			"description" => "rrdtool v1.2以上版本所使用的Truetype字体路径.",
 			"method" => "filepath",
 			"max_length" => "255"
+			,"default" => "/usr/share/fonts/ukai.ttc"
 			),
 		"path_php_binary" => array(
 			"friendly_name" => "PHP路径",

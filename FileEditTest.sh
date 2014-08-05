@@ -154,3 +154,41 @@ PHP_DIR=$CACTI_LINK/include/global_settings.php
 }
 # ChangePHP2_1 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "max_length"  "/usr/share/fonts/ukai.ttc"
 
+ChangePHP2_3()
+{
+LOG_ERROR "Edit Test 2.3"
+# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(尾插法：不完善“，”处理的不好)
+# 步骤1, 定位字符串,找到首字段所在行
+# 步骤2, 模拟原字符串格式,复制字符串 直到尾字段“）”
+# 步骤3, 修改符合格式的字符串的内容  直到尾字段“）”
+PHP_DIR=$CACTI_LINK/include/global_settings.php
+	# 找出指定行并修改
+	LOG_INFO "Change $1 enoD"
+		FILE=$1     # "$PHP_DIR/global_settings.php"
+		BEGIN=$2    # "path_rrdtool_default_font"
+		NEWADD=$3   # "default"
+		CONTENT=$4  # "/usr/share/fonts/ukai.ttc"
+		LOG_INFO "  Found : $FILE"
+		
+		LOG_INFO "  Edit  : Line $ss enoD"
+			# 定位 path_rrdtool_default_font 段到 max_length 段的字符串
+			ss=$(grep -n $BEGIN $FILE | cut -d ':' -f 1)
+			# 判断 default 段是否存在
+			ct="`sed -n $ss',/)/  s:"'$NEWADD'".*$:&:p' $FILE`"
+			if [ -z "$ct" ]; then
+				echo "<$NEWADD> Not Exited."
+				# 重复 max_length 段的格式
+				sed -i $ss',/)/ s/^.*).*$/&,\n&/' $FILE                      # 非尾有逗号
+				# 新增 default 段
+				sed -i $ss',/)/ s:).*$:,"'$NEWADD'" => "'$CONTENT'":' $FILE  # 末尾无逗号
+			else
+				echo "<$NEWADD> Exited."
+				sed -i $ss',/)/ s:'$NEWADD'.*$:,"'$NEWADD'" => "'$CONTENT'":' $FILE  # 末尾无逗号
+			fi
+		LOG_INFO "  Edit  : Line $ss Done\n"
+
+		LOG_INFO "  Grep  : enabled from $1"
+			sed -n '79,90p' $FILE	
+	LOG_INFO "Change $1 Done.\n"
+}
+ChangePHP2_3 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "default"  "/usr/share/fonts/ukai.ttc"
