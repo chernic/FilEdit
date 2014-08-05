@@ -53,11 +53,12 @@ LOG_INFO "Load Configure Done.\n"
 #####################################################
 # File Edit Functions
 #####################################################
-# Version : 0.0.1
+# Version : 0.2.4
 # Make by Chernic.Y.Chen @ China
 # E-Mail : iamchernic@gmail.com
 # Date : 2014-08-04
 # v0.0.1(2014-08-04) : File Created
+# v0.2.4(2014-08-05) : ChangeRepo1() ChangePHP2_0() ChangePHP2_2() ChangePHP2_3() ChangePHP2_4() Added.
 TEST_IN=$LOCAL_PATH/TestFilesIn
 TEST_OT=$LOCAL_PATH/TestFilesOut
 
@@ -71,166 +72,162 @@ LOG_WARN "Copy UnEdited File to Test Done\n"
 
 ChangeRepo1()
 {
-LOG_ERROR "Edit Test 1"
-# 模拟场景一:# 失效Yum Repo 中的 epel 库
-# 步骤1, 先查找 [epel] 所在行
-# 步骤2, 在修改第一个出现的 "enabled="
-# 步骤3, 赋值为1或者0
-REPO_DIR=/etc/yum.repos.d/
-REPO_DIR=$TEST_OT
+	LOG_ERROR "Edit Test 1"
+	# 模拟场景一:# 失效Yum Repo 中的 epel 库
+	# 步骤1, 先查找 [epel] 所在行
+	# 步骤2, 在修改第一个出现的 "enabled="
+	# 步骤3, 赋值为1或者0
+	# v0.0.2(2014-08-04) : 修改LOG以及报错信息
+	REPO_DIR=/etc/yum.repos.d/
+	REPO_DIR=$TEST_OT
 	# 找出指定行并修改
+	
 	LOG_INFO "Change $1.repo enoD"
 		FILE=$REPO_DIR/$1.repo
 		lss=$1
 		ss=$(grep -n '^\['$lss'\]' $FILE | cut -d ':' -f 1)
 		sed -i $ss',/enabled/ s/enabled.*/enabled='$2'/' $FILE
 		
-		LOG_INFO "Grep enabled from $1.repo"
+	LOG_INFO "Grep enabled from $1.repo"
 		grep -n 'enabled' $FILE	
-	
-	LOG_INFO "Change $1.repo Done\n"
 }
-ChangeRepo1 "epel" "0";
-ChangeRepo1 "epel" "1";
+# ChangeRepo1 "epel" "0";
+# ChangeRepo1 "epel" "1";
 
 ChangePHP2_0()
 {
-LOG_ERROR "Edit Test 2.0"
-# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(原始版)
-# 步骤1, 定位字符串,找到首字段所在行
-# 步骤2, 模拟原字符串格式,复制字符串 直到尾字段
-# 步骤3, 修改符合格式的字符串的内容  直到尾字段
-PHP_DIR=$CACTI_LINK/include/global_settings.php
-PHP_DIR=$TEST_OT
-DIRR="/usr/share/fonts/ukai.ttc"
-	# 找出指定行并修改
-	LOG_INFO "Change $1 enoD"
-		FILE=$1
-		LOG_INFO "  Found : $FILE"
-		
-		LOG_INFO "  Edit  : Line $ss enoD"
-			# 定位 path_rrdtool_default_font 段到 max_length 段的字符串
-			ss=$(grep -n 'path_rrdtool_default_font' $FILE | cut -d ':' -f 1)
-			# 重复 max_length 段的格式
-			sed -i $ss',/max_length/ s/^.*max_length.*$/&\n&/' $FILE
-			# 修改 新增的 max_length 段
-			sed -i $ss',/max_length/ s:"max_length.*$:"default" => "'$DIRR'",:' $FILE
-		LOG_INFO "  Edit  : Line $ss Done\n"
+	LOG_ERROR "Edit Test 2.0"
+	# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(原始版)
+	# 步骤1, 定位字符串,找到首字段所在行
+	# 步骤2, 模拟原字符串格式,复制字符串 直到尾字段
+	# 步骤3, 修改符合格式的字符串的内容  直到尾字段
+	# v0.0.2(2014-08-04) : 修改LOG以及报错信息
+	PHP_DIR=$CACTI_LINK/include/global_settings.php
+	PHP_DIR=$TEST_OT
+	DIRR="/usr/share/fonts/ukai.ttc"
+	FILE=$1
+	
+	LOG_INFO "Found : $FILE"
+		# 定位 path_rrdtool_default_font 段到 max_length 段的字符串
+		ss=$(grep -n 'path_rrdtool_default_font' $FILE | cut -d ':' -f 1)
+	
+	LOG_WARN "Edit Line $ss"
+		# 重复 max_length 段的格式
+		sed -i $ss',/max_length/ s/^.*max_length.*$/&\n&/' $FILE
+		# 修改 新增的 max_length 段
+		sed -i $ss',/max_length/ s:"max_length.*$:"default" => "'$DIRR'",:' $FILE
 
-		LOG_INFO "  Grep  : enabled from $1"
-			sed -n '79,90p' $FILE	
-	LOG_INFO "Change $1 Done.\n"
+	LOG_INFO "Grep <79 to 90 > from $1"
+		sed -n '79,90p' $FILE	
 }
 # ChangePHP2_0 "$TEST_OT/global_settings.php" 
 
 ChangePHP2_1()
 {
-LOG_ERROR "Edit Test 2.1"
-# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(中插法，不能保证max_length存在)
-# 步骤1, 定位字符串,找到首字段所在行
-# 步骤2, 模拟原字符串格式,复制字符串 直到尾字段
-# 步骤3, 修改符合格式的字符串的内容  直到尾字段
-PHP_DIR=$CACTI_LINK/include/global_settings.php
-	# 找出指定行并修改
-	LOG_INFO "Change $1 enoD"
-		FILE=$1     # "$PHP_DIR/global_settings.php"
-		BEGIN=$2    # "path_rrdtool_default_font"
-		ENDIN=$3    # "max_length"
-		CONTENT=$4  # "/usr/share/fonts/ukai.ttc"
-		LOG_INFO "  Found : $FILE"
+	LOG_ERROR "Edit Test 2.1"
+	# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(中插法，不能保证max_length存在)
+	# 步骤1, 定位字符串,找到首字段所在行
+	# 步骤2, 模拟原字符串格式,复制字符串 直到尾字段
+	# 步骤3, 修改符合格式的字符串的内容  直到尾字段
+	# v0.0.2(2014-08-04) : 修改LOG以及报错信息
+	PHP_DIR=$CACTI_LINK/include/global_settings.php
+	FILE=$1     # "$PHP_DIR/global_settings.php"
+	BEGIN=$2    # "path_rrdtool_default_font"
+	ENDIN=$3    # "max_length"
+	CONTENT=$4  # "/usr/share/fonts/ukai.ttc"
+	
+	LOG_INFO "Found : $FILE"
+	# 定位 path_rrdtool_default_font 段到 max_length 段的字符串
+	ss=$(grep -n $BEGIN $FILE | cut -d ':' -f 1)
+	
+	LOG_WARN "Edit Line $ss"
+		# 重复 max_length 段的格式
+		sed -i $ss',/'$ENDIN'/ s/^.*'$ENDIN'.*$/&\n&/' $FILE
+		# 修改 新增的 max_length 段
+		sed -i $ss',/'$ENDIN'/ s:"'$ENDIN'.*$:"default" => "'$CONTENT'",:' $FILE
 		
-		LOG_INFO "  Edit  : Line $ss enoD"
-			# 定位 path_rrdtool_default_font 段到 max_length 段的字符串
-			ss=$(grep -n $BEGIN $FILE | cut -d ':' -f 1)
-			# 重复 max_length 段的格式
-			sed -i $ss',/'$ENDIN'/ s/^.*'$ENDIN'.*$/&\n&/' $FILE
-			# 修改 新增的 max_length 段
-			sed -i $ss',/'$ENDIN'/ s:"'$ENDIN'.*$:"default" => "'$CONTENT'",:' $FILE
-		LOG_INFO "  Edit  : Line $ss Done\n"
-
-		LOG_INFO "  Grep  : enabled from $1"
-			sed -n '79,90p' $FILE	
-	LOG_INFO "Change $1 Done.\n"
+	LOG_INFO "Grep < $ss to $ENDFLAG > from $1"
+		sed -n '79,90p' $FILE	
 }
 # ChangePHP2_1 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "max_length"  "/usr/share/fonts/ukai.ttc"
 
 ChangePHP2_3()
 {
-LOG_ERROR "Edit Test 2.3"
-# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(尾插法：不完善“，”处理的不好)
-# 步骤1, 定位字符串,找到首字段所在行
-# 步骤2, 模拟原字符串格式,复制字符串 直到尾字段“）”
-# 步骤3, 修改符合格式的字符串的内容  直到尾字段“）”
-PHP_DIR=$CACTI_LINK/include/global_settings.php
-	# 找出指定行并修改
-	LOG_INFO "Change $1 enoD"
-		FILE=$1     # "$PHP_DIR/global_settings.php"
-		BEGIN=$2    # "path_rrdtool_default_font"
-		NEWADD=$3   # "default"
-		CONTENT=$4  # "/usr/share/fonts/ukai.ttc"
-		LOG_INFO "  Found : $FILE"
+	LOG_ERROR "Edit Test 2.3"
+	# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(尾插法：不完善“，”处理的不好)
+	# 步骤1, 定位字符串,找到首字段所在行
+	# 步骤2, 模拟原字符串格式,复制字符串 直到尾字段“）”
+	# 步骤3, 修改符合格式的字符串的内容  直到尾字段“）”
+	# v0.0.2(2014-08-04) : 修改LOG以及报错信息
+	PHP_DIR=$CACTI_LINK/include/global_settings.php
+	FILE=$1     # "$PHP_DIR/global_settings.php"
+	BEGIN=$2    # "path_rrdtool_default_font"
+	NEWADD=$3   # "default"
+	CONTENT=$4  # "/usr/share/fonts/ukai.ttc"
+	
+	LOG_INFO "Found : $FILE"
+		# 定位 path_rrdtool_default_font 段到 max_length 段的字符串
+		ss=$(grep -n $BEGIN $FILE | cut -d ':' -f 1)
 		
-		LOG_INFO "  Edit  : Line $ss enoD"
-			# 定位 path_rrdtool_default_font 段到 max_length 段的字符串
-			ss=$(grep -n $BEGIN $FILE | cut -d ':' -f 1)
-			# 判断 default 段是否存在
-			ct="`sed -n $ss',/)/  s:"'$NEWADD'".*$:&:p' $FILE`"
-			if [ -z "$ct" ]; then
-				echo "<$NEWADD> Not Exited."
-				# 重复 max_length 段的格式
-				sed -i $ss',/)/ s/^.*).*$/&,\n&/' $FILE                      # 非尾有逗号
-				# 新增 default 段
-				sed -i $ss',/)/ s:).*$:,"'$NEWADD'" => "'$CONTENT'":' $FILE  # 末尾无逗号
-			else
-				echo "<$NEWADD> Exited."
-				sed -i $ss',/)/ s:'$NEWADD'.*$:,"'$NEWADD'" => "'$CONTENT'":' $FILE  # 末尾无逗号
-			fi
-		LOG_INFO "  Edit  : Line $ss Done\n"
+	LOG_WARN "Edit Line $ss"
+		# 判断 default 段是否存在
+		ct="`sed -n $ss',/)/  s:"'$NEWADD'".*$:&:p' $FILE`"
+		if [ -z "$ct" ]; then
+			echo "<$NEWADD> Not Exited."
+			# 重复 max_length 段的格式
+			sed -i $ss',/)/ s/^.*).*$/&,\n&/' $FILE                      # 非尾有逗号
+			# 新增 default 段
+			sed -i $ss',/)/ s:).*$:,"'$NEWADD'" => "'$CONTENT'":' $FILE  # 末尾无逗号
+		else
+			echo "<$NEWADD> Exited."
+			sed -i $ss',/)/ s:'$NEWADD'.*$:,"'$NEWADD'" => "'$CONTENT'":' $FILE  # 末尾无逗号
+		fi
 
-		LOG_INFO "  Grep  : enabled from $1"
-			sed -n '79,90p' $FILE	
-	LOG_INFO "Change $1 Done.\n"
+	LOG_INFO "Grep < $BEGIN to ) > from $1"
+		sed -n '/$BEGIN/,/)/p' $FILE	
 }
 # ChangePHP2_3 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "default"  "/usr/share/fonts/ukai.ttc"
 
 ChangePHP2_4()
 {
-LOG_ERROR "Edit Test 2.4"
-# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(前插法)
-# 步骤1, 定位字符串,找到首字段所在行
-# 步骤2, 判断新增字段是否存在
-# 步骤3.1, 不存在则以method<恒存在>为母版，在其上修改为新增字段
-# 步骤3.2, 存在则直接修改该字段
-PHP_DIR=$CACTI_LINK/include/global_settings.php
-	# 找出指定行并修改
-	LOG_INFO "Change $1 enoD"
-		FILE=$1     # "$PHP_DIR/global_settings.php"
-		BEGIN=$2    # "path_rrdtool_default_font"
-		NEWADD=$3   # "default"
-		CONTENT=$4  # "/usr/share/fonts/ukai.ttc"
-		LOG_INFO "  Found : $FILE"
+	LOG_ERROR "Edit Test 2.4.1"
+	# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(前插法)
+	# 步骤1, 定位字符串,找到首字段所在行
+	# 步骤2, 判断新增字段是否存在
+	# 步骤3.1, 不存在则以 \"method\" <恒存在>为母版，在其上修改为新增字段
+	# 步骤3.2, 存在则直接修改该字段
+	# v0.0.1(2014-08-04) : 兼容 ")," 或 ");" 并可自定义
+	# v0.0.2(2014-08-04) : 修改LOG以及报错信息
+	PHP_DIR=$CACTI_LINK/include/global_settings.php
+	FILE=$1       # "$PHP_DIR/global_settings.php"
+	BEGIN=$2      # "path_rrdtool_default_font"
+	NEWADD=$3     # "default"
+	CONTENT=$4    # "/usr/share/fonts/ukai.ttc"
+	[ -z $5 ] && ENDFLAG='),' || ENDFLAG=$5             # "This can be ), Or ); at the end."
+	
+	LOG_INFO "Found : $FILE"
+		# 定位 path_rrdtool_default_font 段到 max_length 段的字符串
+		ss=$(grep -n \"$BEGIN\" $FILE | cut -d ':' -f 1)
 		
-		LOG_INFO "  Edit  : Line $ss enoD"
-			# 定位 path_rrdtool_default_font 段到 max_length 段的字符串
-			ss=$(grep -n $BEGIN $FILE | cut -d ':' -f 1)
-			# 判断 default 段是否存在
-			ct="`sed -n $ss',/)/  s:"'$NEWADD'".*$:&:p' $FILE`"
-			if [ -z "$ct" ]; then
-				echo "<$NEWADD> Not Exited."
-				# 重复 method 段的格式
-				sed -i $ss',/)/ s/^.*method.*$/&,\n&/' $FILE                          # 非尾有逗号
-				# 基于 method 段新增 $NEWADD 段
-				sed -i $ss',/method/ s:method.*$:'$NEWADD'" => "'$CONTENT'",:' $FILE  # 末尾无逗号
-			else
-				echo "<$NEWADD> Exited."
-				# 直接修改原有 $NEWADD 段
-				sed -i $ss',/)/ s:'$NEWADD'.*$:'$NEWADD'" => "'$CONTENT'",:' $FILE    # 末尾无逗号
-			fi
-		LOG_INFO "  Edit  : Line $ss Done\n"
+	LOG_WARN "Edit Line $ss"
+		# 判断 "default" 段是否存在(假如重复会出错)
+		ct="`sed -n $ss',/'$ENDFLAG'/  s:"'$NEWADD'".*$:&:p' $FILE`"
+		if [ -z "$ct" ]; then
+			echo "\"$BEGIN\" <\"$NEWADD\"> Not Exited. Insert it."
+			# 重复 \"method\" 段的格式
+			sed -i $ss',/'$ENDFLAG'/ s/^.*\"method\".*$/&,\n&/' $FILE                            # 非尾有逗号
+			# 基于 method 段新增 $NEWADD 段
+			sed -i $ss',/\"method\"/ s:\"method\".*$:\"'$NEWADD'\" => \"'$CONTENT'\",:' $FILE    # 末尾无逗号
+		else
+			echo "\"$BEGIN\" <\"$NEWADD\"> Exited. Change it."
+			# 直接修改原有 \"'$NEWADD'\" 段
+			sed -i $ss',/'$ENDFLAG'/ s:\"'$NEWADD'\".*$:\"'$NEWADD'\" => \"'$CONTENT'\",:' $FILE # 末尾无逗号
+		fi
 
-		LOG_INFO "  Grep  : enabled from $1"
-			sed -n '79,90p' $FILE	
-	LOG_INFO "Change $1 Done.\n"
+	LOG_INFO "Grep < $ss to $ENDFLAG > from $1"
+		sed -n $ss',/'$ENDFLAG'/p' $FILE	
 }
-ChangePHP2_4 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "default"  "/usr/share/fonts/ukai.ttc"
-ChangePHP2_4 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "description"  "描述已存在，直接修改"
+# ChangePHP2_4 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "default"      "/usr/share/fonts/ukai.ttc"
+# ChangePHP2_4 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "description"  "描述已存在，直接修改"
+# ChangePHP2_4 "$TEST_OT/global_settings.php"  "snmp_ver"                   "default"      "2"
+
