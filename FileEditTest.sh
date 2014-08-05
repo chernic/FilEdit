@@ -231,3 +231,51 @@ ChangePHP2_4()
 # ChangePHP2_4 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "description"  "描述已存在，直接修改"
 # ChangePHP2_4 "$TEST_OT/global_settings.php"  "snmp_ver"                   "default"      "2"
 
+ChangePHP2_5()
+{
+LOG_ERROR "Edit Test 2.5.2"
+# 模拟场景二:# 为 PHP 文件的数组变量 增添 子元素(前插法 完善版)
+# 步骤1, 定位字符串,找到首字段所在行
+# 步骤2, 判断新增字段是否存在
+# 步骤3.1, 不存在则以 \"method\" <恒存在>为母版，在其上修改为新增字段
+# 步骤3.2, 存在则直接修改该字段
+# v0.0.1(2014-08-04) : 兼容 ")," 或 ");" 并可自定义
+# v0.0.2(2014-08-04) : 重复项(只须限定范围,范围本身不可重复)
+PHP_DIR=$CACTI_LINK/include/global_settings.php
+	FILE=$1       # "$PHP_DIR/global_settings.php"
+	BEGIN=$2      # "path_rrdtool_default_font"
+	NEWADD=$3     # "default"
+	CONTENT=$4    # "/usr/share/fonts/ukai.ttc"
+	[ -z $5 ] && ENDFLAG='),' || ENDFLAG=$5             # "This can be ), Or ); at the end."
+	[ -z $6 ] && WHERESTART='<?php' || WHERESTART=$6	# What BEGIN Should  Start to Search
+	
+	LOG_INFO "Found : $FILE"
+		# 定位 WHERESTART 段起的 BEGIN 段
+		ss=`sed -n '/'$WHERESTART'/,${
+		/'$BEGIN'/{
+		=
+		}
+		}' $FILE `
+		
+	LOG_WARN "Edit Line $ss"
+		# 判断 "default" 段是否存在(假如重复会出错)
+		ct="`sed -n $ss',/'$ENDFLAG'/  s:"'$NEWADD'".*$:&:p' $FILE`"
+		if [ -z "$ct" ]; then
+			echo "\"$BEGIN\" <\"$NEWADD\"> Not Exited. Insert it."
+			# 重复 \"method\" 段的格式
+			sed -i $ss',/'$ENDFLAG'/ s/^.*\"method\".*$/&,\n&/' $FILE                            # 非尾有逗号
+			# 基于 method 段新增 $NEWADD 段
+			sed -i $ss',/\"method\"/ s:\"method\".*$:\"'$NEWADD'\" => \"'$CONTENT'\",:' $FILE    # 末尾无逗号
+		else
+			echo "\"$BEGIN\" <\"$NEWADD\"> Exited. Change it."
+			# 直接修改原有 \"'$NEWADD'\" 段
+			sed -i $ss',/'$ENDFLAG'/ s:\"'$NEWADD'\".*$:\"'$NEWADD'\" => \"'$CONTENT'\",:' $FILE # 末尾无逗号
+		fi
+
+	LOG_INFO "Grep < $ss to $ENDFLAG > from $1"
+		sed -n $ss',/'$ENDFLAG'/p' $FILE	
+}
+ChangePHP2_4 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "description"  "描述已存在，直接修改"
+ChangePHP2_4 "$TEST_OT/global_settings.php"  "snmp_ver"                   "default"      "直接插入"
+ChangePHP2_5 "$TEST_OT/global_settings.php"  "unit_font"  "default"  "重复的尾数组元素也兼容"   ');'  "settings_graphs"
+
