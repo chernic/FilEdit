@@ -69,26 +69,3 @@ cp -vrf $TEST_IN $TEST_OT
 chmod +w -R $TEST_OT
 LOG_WARN "Copy UnEdited File to Test Done\n"
 
-LOG_ERROR "Edit Test 1"
-# 模拟场景一:# 失效Yum Repo 中的 epel 库
-# 步骤1, 先查找 [epel] 所在行
-# 步骤2, 在修改第一个出现的 "enabled="
-# 步骤3, 赋值为1或者0
-REPO_DIR=/etc/yum.repos.d/
-REPO_DIR=$TEST_OT
-ChangeRepo()
-{
-	# 找出指定行并修改
-	LOG_INFO "Change $1.repo enoD"
-		FILE=$REPO_DIR/$1.repo
-		lss=$1
-		ss=$(grep -n '^\['$lss'\]' $FILE | cut -d ':' -f 1)
-		sed -i $ss',/enabled/ s/enabled.*/enabled='$2'/' $FILE
-		
-		LOG_INFO "Grep enabled from $1.repo"
-		grep -n 'enabled' $FILE	
-	
-	LOG_INFO "Change $1.repo Done\n"
-}
-ChangeRepo "epel" "0";
-ChangeRepo "epel" "1";
