@@ -12,3 +12,16 @@ DIRR=`echo "/usr/share/fonts/ukai.ttc" | sed 's:/:\\/:g'`
 
 NEW_STRING="CCC/DDD"; 
 echo "aaa/bbb/ccc/ddd/eee" | sed  "s:ccc/ddd:${NEW_STRING}:"
+
+cat > test <<"EOF"
+/if/{
+=
+}
+EOF
+cat > text <<"EOF"
+/ if/{
+=
+ if
+}
+EOF
+sed -n -f test text

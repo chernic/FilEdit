@@ -62,7 +62,7 @@ cat $CSV_FILE |
 # +------- <oid> 
 
 . ./XmlMaker.sh
-outfile=Output.xml
+outfile=Output1.xml
 
 put_head 'xml version='1.0' encoding="uft8"'
 tag_start 'query'
