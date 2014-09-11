@@ -246,13 +246,14 @@ PHP_DIR=$CACTI_LINK/include/global_settings.php
 	BEGIN=$2      # "path_rrdtool_default_font"
 	NEWADD=$3     # "default"
 	CONTENT=$4    # "/usr/share/fonts/ukai.ttc"
-	[ -z $5 ] && ENDFLAG='),' || ENDFLAG=$5             # "This can be ), Or ); at the end."
-	[ -z $6 ] && WHERESTART='<?php' || WHERESTART=$6	# What BEGIN Should  Start to Search
+	[ -z $5 ] && ENDFLAG='),' || ENDFLAG=$5             # This can be ), Or );
+	[ -z $6 ] && WHERESTART='<?php' || WHERESTART=$6	# What $BEGIN Should Start Searching
+    [ -z $7 ] && WHEREEND='?>' || WHEREEND=$7           # What $BEGIN Should Stop  Searching
 	
 	LOG_INFO "Found : $FILE"
-		# 定位 WHERESTART 段起的 BEGIN 段
-		ss=`sed -n '/'$WHERESTART'/,${
-		/\"'$BEGIN'\/{
+		# 定位 WHERESTART 段起 WHEREEND 段结束的 $BEGIN => array( 段
+		ss=`sed -n '/'$WHERESTART'/,/'$WHEREEND'/{
+		/\"'$BEGIN'\" => array(/{
 		=
 		}
 		}' $FILE `
@@ -275,7 +276,125 @@ PHP_DIR=$CACTI_LINK/include/global_settings.php
 	LOG_INFO "Grep < $ss to $ENDFLAG > from $1"
 		sed -n $ss',/'$ENDFLAG'/p' $FILE	
 }
-ChangePHP2_4 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "description"  "描述已存在，直接修改"
-ChangePHP2_4 "$TEST_OT/global_settings.php"  "snmp_ver"                   "default"      "直接插入"
-ChangePHP2_5 "$TEST_OT/global_settings.php"  "unit_font"  "default"  "重复的尾数组元素也兼容"   ');'  "settings_graphs"
+# ChangePHP2_4 "$TEST_OT/global_settings.php"  "path_rrdtool_default_font"  "description"  "描述已存在，直接修改"
+# ChangePHP2_4 "$TEST_OT/global_settings.php"  "snmp_ver"                   "default"      "直接插入"
+# ChangePHP2_5 "$TEST_OT/global_settings.php"  "unit_font"  "default"  "重复的尾数组元素也兼容"   ');'  "settings_graphs"
+
+
+# sed -n '/INSERT INTO `host` VALUES/{
+# s/\([^,]*\).*/\1/p
+# }' ./TestFilesOut/cacti.sql
+
+# sed ' s@\([^:]*\):\([^:]*\):\([^:]*\)@\3:\2:\1@g' /etc/passwd
+
+# sed -i '/INSERT INTO `host` VALUES/{
+# s@\([^,]*\),\([^,]*\),\([^,]*\),\([^,]*\),\([^,]*\),\([^,]*\),\([^,]*\)@\1,\2,\3,\4,\5,\6, 2@
+# }' ./TestFilesOut/cacti.sql
+
+
+
+SqlConf3_1()
+{
+LOG_ERROR "Edit Test 3.1"
+# 模拟场景二: 修改MySQL语句中的变量(不大于10行)
+# 步骤1, 定位字符串,找到首字段所在行
+# 步骤2, 判断新增字段是否存在
+# 步骤3.1, 不存在则以 \"method\" <恒存在>为母版，在其上修改为新增字段
+# 步骤3.2, 存在则直接修改该字段
+# v0.0.1(2014-08-04) : 兼容 ")," 或 ");" 并可自定义
+# v0.0.2(2014-08-04) : 重复项(只须限定范围,范围本身不可重复)
+	FILE=$1       # 文件名称
+	START=$2      # 开始标志
+	ADDFLG=$3     # 分割标志
+	CONTENT=$4    # 更改内容
+	ADDWHERE=$5   # 第几段内容
+	
+	LOG_INFO "Found : $FILE"
+		TARGET='\([^'$ADDFLG']*\)'$ADDFLG
+		# 自增长的正则表达式
+		for((i=1;i<=$ADDWHERE;i++));
+		do 
+			TARGET=$TARGET'\([^'$ADDFLG']*\)'$ADDFLG
+			BEFORE=$BEFORE'\'$i','
+		done
+		# echo $TARGET # TARGET='\([^,]*\),\([^,]*\),\([^,]*\),\([^,]*\),\([^,]*\),\([^,]*\),\([^,]*\),'
+		# echo $BEFORE # BEFORE='\1,\2,\3,\4,\5,\6,'
+		
+	LOG_WARN "Edit Line of $START"
+		# 包含正则表达式的分段查找替换
+		sed -i "/$START/{
+		s@$TARGET@$BEFORE $CONTENT,@
+		}" $FILE
+		# sed -i '/INSERT INTO `host` VALUES/{
+		# s@'$TARGET'@'$BEFORE' '$CONTENT',@
+		# }' $FILE
+
+	LOG_INFO "Grep < $ss to $ENDFLAG > from $1"
+		sed -n "/$START/p" $FILE
+} 
+# SqlConf3_1 "./TestFilesOut/cacti.sql"  "INSERT INTO \`host\` VALUES"  ","  2  6 
+# sed -n '1888,1892p' ./TestFilesOut/cacti.sql
+
+# SqlConf3_2()
+# {
+# LOG_ERROR "Edit Test 3.1"
+# # 模拟场景二: 修改MySQL语句中的变量(不大于10行)
+# # 步骤1, 定位字符串,找到首字段所在行
+# # 步骤2, 判断新增字段是否存在
+# # 步骤3.1, 不存在则以 \"method\" <恒存在>为母版，在其上修改为新增字段
+# # 步骤3.2, 存在则直接修改该字段
+# # v0.0.1(2014-08-04) : 兼容 ")," 或 ");" 并可自定义
+# # v0.0.2(2014-08-04) : 重复项(只须限定范围,范围本身不可重复)
+	# FILE=$1       # 文件名称
+	# START=$2      # 开始标志
+	# ADDFLG=$3     # 分割标志
+	# CONTENT=$4    # 更改内容
+	# ADDWHERE=$5   # 第几段内容
+
+	# # LOG_INFO "Found : $FILE"
+	# # awk -F"," -v RS="," 'BEGIN{ FS=OFS="INSERT"  }{
+	# # print $1;
+	# # }' $FILE
+
+	
+	# # awk 'BEGIN{ FS=OFS","; RS=ORS=","  }{
+	# # print $1
+	# # }' $FILE
+	
+	# ss=$(grep -n "$START" "$FILE" | cut -d ':' -f 1)
+	# echo "ss=$ss"
+	
+	# tmp=$(grep -n "$START" $FILE)
+	# echo "tmp=$tmp"
+	
+	# #awk '/INSERT INTO/{FS=OFS=","}{$7="2"}1' $FILE
+# } 
+# SqlConf3_2 "./TestFilesOut/cactitest.sql"  "INSERT INTO \`host\` VALUES"  ","  2  6 
+# SqlConf3_2 "./TestFilesOut/cactitest.sql"  "INSERT INTO host_graph VALUES"  ","  2  6 
+
+
+Name="Table structure for table"
+
+[ -e TestFilesCsplit ] && rm -rf TestFilesCsplit
+mkdir TestFilesCsplit
+cd TestFilesCsplit
+# time csplit ../TestFilesOut/cacti.sql /"-- Table structure for table*"/-2  -n 3 {*}
+
+# 获取
+time awk "/$Name/{i++ }{print > \"file\"i}" ../TestFilesOut/cacti.sql
+
+Num=0
+for i in $(grep -n "^-- Table structure for table.*$" "../TestFilesOut/cacti.sql" | cut -d ' ' -f 6 | cut -d '`' -f 2)
+do 
+	Num=$(($Num+1))   
+	mv "file$Num" "$Num$i.sql"
+done
+
+
+
+
+
+
+
+
 
