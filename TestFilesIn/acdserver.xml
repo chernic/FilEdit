@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system>
+	<!--通讯服务focucomm所在服务器的域名或IP地址-->
+	<NetBusIp>192.168.1.203</NetBusIp>
+	<!--通讯服务focucomm的对外联接端口号,该值必须与/home/focustar/icip6/cfg/focucomm.cfg文件中[system]下port定义的值一致-->
+	<NetBusPort>6789</NetBusPort>
+	<!--ODBC数据源名称,该名称在/etc/odbc.ini文件中进行定义,结合ODBCUserName和ODBCPWD一起来联接数据库-->
+	<ODBCDataSource>MyICIP6</ODBCDataSource>
+	<!--访问数据库的用户名-->
+	<ODBCUserName>focustar</ODBCUserName>
+	<!--访问数据库的用户密码-->
+	<ODBCPWD>123456</ODBCPWD>
+	<!--ACD服务在通讯服务focucomm上注册一通讯标识值，每个服务向通讯服务focucom联接注册时，传递用于注册的标识号必须唯一，否则通讯服务focucom会返回联接注册失败-->
+	<APPID>9</APPID>
+	<!--CCS主服务向通讯服务focucomm注册时使用的通信标识号,该值必须与/home/focustar/icip6/cfg/ccs_config.xml文件中/configuration/netbus.myId保持一致-->
+	<CCSID>1</CCSID>
+	<!--排队算法脚本文件名,该文件名指的是/home/focustar/icip6/cfg/目录下的queue.py或queue.pyc，两个只要有一个存在即可-->
+	<ScriptName>queue</ScriptName>
+	<!--本参数暂不使用，指数据库类型-->
+	<DataBaseType>MySql</DataBaseType>
+</system>

@@ -78,7 +78,7 @@ $settings = array(
 			),
 		"path_rrdtool_default_font" => array(
 			"friendly_name" => "RRDTool默认字体路径",
-			"description" => "描述已存在，直接修改",
+			"description" => "rrdtool v1.2以上版本所使用的Truetype字体路径.",
 			"method" => "filepath",
 			"max_length" => "255"
 			),
@@ -208,7 +208,7 @@ $settings = array(
 			"friendly_name" => "SNMP版本",
 			"description" => "所有新设备默认使用的SNMP版本.",
 			"method" => "drop_array",
-			"default" => "直接插入",
+			"default" => "版本 2",
 			"array" => $snmp_versions,
 			),
 		"snmp_community" => array(
@@ -1179,7 +1179,6 @@ $settings_graphs = array(
 		"unit_font" => array(
 			"friendly_name" => "单位符号字体文件",
 			"description" => "单位符号项目使用的字体文件",
-			"default" => "重复的尾数组元素也兼容",
 			"method" => "filepath",
 			"max_length" => "100"
 			)
